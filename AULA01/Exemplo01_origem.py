@@ -1,23 +1,23 @@
+#aula 01 - adicao de vetores, multiplicação do vetor por escalar, tamanho ou magnitude do vetor, normalizar o vetor, produto escalar entre dois vetores
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Definição dos vetores
-a_origem = np.array([0, 0])  # Ponto inicial do vetor a
-ponta_a = np.array([4, 1])  # Ponto final do vetor a (deslocamento)
-# comentario de como funciona
+# Criando os vetores (definindo o X e Y)
+a_origem = np.array([0, 0])  # inicia na origem 
+ponta_a = np.array([4, 1])  # "final" do vetor, caminho que percorre
 # ponta_a = a_origem (x,y) + ponta_a (x,y) = (0,0) + (4,1) = (4,1) = este valor sera o ponto no grafico
 
-b_origem = np.array([0, 0])  # Ponto inicial do vetor b
-ponta_b = np.array([-3, 4])  # Ponto final do vetor b (deslocamento)
-#comentario de como funciona
+b_origem = np.array([0, 0])  # Ponto inicial - inicia na origem 
+ponta_b = np.array([-3, 4])  # "final" do vetor, caminho que percorre
 #ponta_b = b_origem (x,y) + ponta_b (x,y) = (0,0) + (-3,4) = (-3,4) = este valor sera o ponto no grafico
 
 # Criando o gráfico
-# 'fig' representa a figura geral do gráfico e pode ser usado para ajustes globais.
-# 'ax' é o objeto do eixo onde os vetores serão desenhados.
+# 'fig' representa a figura geral do gráfico e pode ser usado para ajustes globais
+# 'ax' é o objeto do eixo onde os vetores serão desenhados
 fig, ax = plt.subplots()
-ax.axhline(0, color='black', linewidth=0.5)  # Linha do eixo X
-ax.axvline(0, color='black', linewidth=0.5)  # Linha do eixo Y
+ax.axhline(0, color='black', linewidth=0.5)  # Linha do eixo X - origem
+ax.axvline(0, color='black', linewidth=0.5)  # Linha do eixo Y - origem
 ax.grid(True, linestyle='--', linewidth=0.5)  # Grade do gráfico
 ax.set_xlim(-10, 10)  # Ajuste do limite do eixo X
 ax.set_ylim(-10, 10)  # Ajuste do limite do eixo Y
