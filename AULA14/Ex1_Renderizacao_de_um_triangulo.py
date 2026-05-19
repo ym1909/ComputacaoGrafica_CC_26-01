@@ -45,7 +45,7 @@ def inicializaOpenGL():
 
 def inicializaObjetos():
     global Vao
-    # Devido ao fato de que cada objeto que modelarmos possuir, geralmente, uma coleção
+    # Devido ao fato de que cada objeto que modelarmos possui, geralmente, uma coleção
 	# de buffers de informaçõees referentes aos seus vértices (tais como coordenadas dos vértices,
 	# coordenadas de texturas, normais, cores, etc), utilizamos um objeto do tipo Vertex Attribute Object (VAO)
 	# que "une" e "representa" todos os buffers do objeto em um único identificador.
@@ -61,7 +61,7 @@ def inicializaObjetos():
 
     # Definição de um VBO para os vértices do triângulo
 	# - Primeiramente, definimos em um vetor de float os vértices do triângulo;
-	# - Em seguida, criamos uma cópia desses dados na placa gráfica através deu ma unidade denominada Vertex Buffer Object (VBO).
+	# - Em seguida, criamos uma cópia desses dados na placa gráfica através de uma unidade denominada Vertex Buffer Object (VBO).
 	# Para isso, nós geramos primeiramente um buffer vazio, através da função glGenBuffers, e então setamos esse buffer como buffer 
 	# atual na máquina de estados do OpenGL através de glBindBuffer,e por fim copiamos os pontos para esse buffer através do glBufferData.
     points = [
@@ -89,7 +89,7 @@ def inicializaObjetos():
 	# - o primeiro parâmetro (0) significa que estamos definido o layout do atributo 0 (buffer de vértices)
 	# - o segundo parâmetro (3) significa que esse buffer é formado por 3 variáveis (x,y, e z),
 	# - o terceiro parâmetro, indica que as variáveis são do tipo float
-	# - o quarto parâmetro indica que nós desejamos normalizar os valores
+	# - o quarto parâmetro indica se os valores devem ser normalizados automaticamente ou não, neste exemplo os valores já estão normalizados
     # - o quinto parâmetro é o byte offset entre os atributos, caso tenha sido especificado um único VBO para mais de um tipo de informação
     # - o sexto parâmetro é o offset do primeiro elemento, que no nosso caso, é 0, pois queremos todos os elementos do array
     #   -- Devido a um bug da biblioteca, precisamos passar None ao invés de 0
@@ -108,44 +108,93 @@ def inicializaObjetos():
 	]
     cores = np.array(cores, dtype=np.float32) #converte o array para numpy
     cvbo = glGenBuffers(1) #gera o vbo para as cores
-    glBindBuffer(GL_ARRAY_BUFFER, cvbo) #da um bind no vbo das cores
+    glBindBuffer(GL_ARRAY_BUFFER, cvbo) # define o VBO das cores como buffer atual
     glBufferData(GL_ARRAY_BUFFER, cores, GL_STATIC_DRAW) #copia os dados para a memória de vídeo
     glEnableVertexAttribArray(1) #ativa o índice 1 para o vbo das cores
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, None) #configura o vbo das cores
 
 
 def inicializaShaders():
+    
     global Shader_programm
-    # Especificação do Vertex Shader:
-	# - O Vertex Shader é responsável por determinar a posição final de cada vértice do objeto
-	# - a primeira linha especifica a versão da GLSL que estamos utilizando, no caso, 4.0.0
-	# - em seguida definimos uma variável de entrada (in) do tipo vec3 (3 valores) chamada vp,
-	# que receberá os valores dos vértices do triangulo no VAO especificado no Python
-	# - a posição final do vértice é definida na variável gl_Position, que neste caso será o mesmo
-	# valor de entrada (vp)
-	# - a saída gl_Position deve ser um dado do tipo vec4 (4 valores), por isso adicionamos 1.0 no final
-	# para o valor de w, indicando que o mesmo representa um ponto no espaço
+    # ========================================================
+    # Especificação do Shader_programm
+    # ========================================================
+    #
+    # - O Vertex Shader é responsável por processar cada vértice
+    #   do objeto e definir sua posição final na tela
+    #
+    # - A linha "#version 400" define que estamos utilizando
+    #   a versão 4.0 da GLSL
+    #
+    # - "layout(location = 0)" define que este atributo receberá
+    #   os dados da posição enviados pelo Python
+    #
+    # - "layout(location = 1)" define que este atributo receberá
+    #   os dados das cores enviados pelo Python
+    #
+    # - "in" significa variável de entrada do shader
+    #
+    # - "vec3" significa vetor com 3 valores:
+    #   x,y,z ou r,g,b
+    #
+    # - "out vec3 cores" envia os dados de cor
+    #   para o Fragment Shader
+    #
+    # - gl_Position define a posição final do vértice
+    #
+    # - gl_Position deve obrigatoriamente ser um vec4,
+    #   por isso adicionamos o valor 1.0 ao final
+    # representando a coordenada W que é utilizada para transformações de perspectiva
+    # O W é um valor que é utilizado para realizar transformações de perspectiva, ou seja, para simular a profundidade dos objetos na cena.
+    # Ele é utilizado para transformar as coordenadas do espaço 3D para o espaço 2D da tela, permitindo que objetos mais distantes
+    # pareçam menores do que objetos mais próximos.
+    # No caso deste exemplo, como estamos renderizando um triângulo simples sem nenhuma transformação de perspectiva,
+    # podemos simplesmente definir o valor de W como 1.0.
     vertex_shader = """
-        #version 400
-        layout(location = 0) in vec3 vertex_posicao; //Vem do Python (IN), do VBO 0 (POSIÇÕES)
-        layout(location = 1) in vec3 vertex_cores; //Vem do Python (IN), do VBO 1 (CORES)
+         #version 400
+
+        // atributo posição
+        layout(location = 0) in vec3 vertex_posicao;
+        // atributo cor
+        layout(location = 1) in vec3 vertex_cores;
+        // saída para o fragment shader
         out vec3 cores;
+
         void main () {
+
+            // envia a cor para o fragment shader
             cores = vertex_cores;
-            gl_Position = vec4 (vertex_posicao.x, vertex_posicao.y, vertex_posicao.z, 1.0);
+
+            // posição final do vértice
+            gl_Position = vec4(vertex_posicao.x,vertex_posicao.y,vertex_posicao.z,1.0);
         }
     """
-    # Como os shaders são um programa "a parte", precisamos compilá-lo e verificar se não houve nenhum erro de compilação
+ 
+    # Como shaders são programas executados pela GPU,
+    # precisamos compilá-los e verificar se não ocorreu nenhum erro
     vs = OpenGL.GL.shaders.compileShader(vertex_shader, GL_VERTEX_SHADER)
     if not glGetShaderiv(vs, GL_COMPILE_STATUS):
         infoLog = glGetShaderInfoLog(vs, 512, None)
         print("Erro no vertex shader:\n", infoLog)
 
     # Especificação do Fragment Shader:
-	# - o Fragment Shader é responsável por determinar a cor de cada fragmento da superfície do objeto
-	# - a primeira linha especifica a versão da GLSL que estamos utilizando, no caso, 4.0.0
-	# - a cor final é determinada pela variável frag_colour, que neste caso é fixa em um valor RGBA
-	# de (0.5, 0.0, 0.5, 1.0), ou seja, magenta e sem transparencia.
+    #   # - o Fragment Shader é responsável por determinar
+    #   a cor final de cada fragmento (pixel) do objeto
+    # - a primeira linha especifica a versão da GLSL
+    #   que estamos utilizando, no caso, 4.0.0
+    #
+    # - "in vec3 cores" recebe as cores enviadas
+    #   pelo Vertex Shader
+    #
+    # - a variável frag_colour define a cor final
+    #   do fragmento
+    #
+    # - neste exemplo, utilizamos as cores vindas
+    #   dos vértices do objeto
+    #
+    # - o valor 1.0 representa opacidade total
+    #   (sem transparência)
     fragment_shader = """
         #version 400
         in vec3 cores;
@@ -213,8 +262,7 @@ def inicializaRenderizacao():
 # Função principal
 def main():
     inicializaOpenGL() #configuração do ambiente (janelas, bibliotecas, etc.)
-    inicializaObjetos() #modelagem dos objetos e envio dos mesmos para a placa de vídeo
-    #inicializaObjetos() #modelagem dos objetos e envio dos mesmos para a placa de vídeo
+    inicializaObjetos() #modelagem dos objetos e envio dos mesmos para a placa de vídeo   
     inicializaShaders() #programação dos shaders, especificando como esses objetos devem ser renderizados
     inicializaRenderizacao() #onde é feita a renderização na tela dos objetos modelados
 
