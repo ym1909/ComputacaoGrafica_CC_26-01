@@ -53,9 +53,9 @@ A Nota Final (NF) é a média aritmética das três notas semestrais:
 
 | Avaliação | Composição | Peso |
 | :--- | :--- | :--- |
-| **N1** | Exercícios (3.0) + Produto de Aprendizagem 1 (7.0) | 10.0 |
-| **N2** | Exercícios (3.0) + Produto de Aprendizagem 2 (7.0) | 10.0 |
-| **N3** | Exercícios (3.0) + Trabalho Final (7.0) | 10.0 |
+| **N1** | Exercícios (4.0) + Produto de Aprendizagem 1 (6.0) | 10.0 |
+| **N2** | Exercícios (4.0) + Produto de Aprendizagem 2 (6.0) | 10.0 |
+| **N3** | Exercícios (4.0) + Trabalho Final (6.0) | 10.0 |
 
 **Média Final:** `NF = (N1 + N2 + N3) / 3`
 
