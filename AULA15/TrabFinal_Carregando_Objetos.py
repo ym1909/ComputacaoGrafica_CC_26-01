@@ -1,5 +1,5 @@
 # ==========================================================
-# TrabFinal_Carregando_Objetos.py
+# Ex7_Carregando_Objetos.py
 # ==========================================================
 #
 # OpenGL Moderno
@@ -555,10 +555,26 @@ def inicializa_shaders():
     )
 
 
-# ==========================================================
-# LOOP PRINCIPAL
-# ==========================================================
+# ======================================================
+# LOOP PRINCIPAL DA APLICAÇÃO
+# ======================================================
+#
+# A partir deste ponto a aplicação entra
+# em um loop contínuo de renderização.
+#
+# O render_loop():
+#
+# - processa teclado
+# - processa mouse
+# - atualiza câmera
+# - limpa tela
+# - desenha objetos
+# - atualiza janela
+#
+# Esse loop permanece executando até
+# o usuário fechar a aplicação.
 
+# ======================================================
 def render_loop():
 
     # ======================================================
@@ -844,3 +860,129 @@ def main():
 if __name__ == "__main__":
 
     main()
+
+
+
+
+# ==========================================================
+# FLUXO GERAL DA APLICAÇÃO - EXPLICAÇÃO
+# ==========================================================
+#
+# INÍCIO DO PROGRAMA
+#
+# if __name__ == "__main__":
+#         ↓
+#       main()
+#
+#
+# ==========================================================
+# MAIN
+# ==========================================================
+#
+# main()
+#
+# 1) inicializa_opengl()
+#       ↓
+#    - GLFW
+#    - janela
+#    - callbacks
+#    - OpenGL
+#    - depth test
+#
+#
+# 2) carregar_objeto(chibi.obj, chibi.png)
+#       ↓
+#    ObjLoaderSimple.load_obj()
+#       ↓
+#    - lê OBJ
+#    - triangula faces
+#    - cria buffer
+#       ↓
+#    OpenGL:
+#    - cria VAO
+#    - cria VBO
+#    - envia buffer GPU
+#       ↓
+#    TextureLoader.load_texture()
+#       ↓
+#    - carrega imagem
+#    - cria textura GPU
+#
+#
+# 3) carregar_objeto(cat.obj, cat.jpg)
+#       ↓
+#    mesmo processo acima
+#
+#
+# 4) inicializa_shaders()
+#       ↓
+#    - compila vertex shader
+#    - compila fragment shader
+#    - cria shader program
+#
+#
+# 5) render_loop()
+#       ↓
+#    LOOP PRINCIPAL DA APLICAÇÃO
+#
+#
+# ==========================================================
+# RENDER LOOP
+# ==========================================================
+#
+# enquanto janela aberta:
+#
+#   ↓
+#
+# 1) calcula delta time
+#
+# 2) processa teclado
+#       ↓
+#    movimenta câmera
+#
+# 3) processa mouse
+#       ↓
+#    atualiza yaw/pitch
+#
+# 4) limpa tela
+#
+# 5) ativa shader
+#
+# 6) cria matrizes:
+#       ↓
+#    - model
+#    - view
+#    - projection
+#
+# 7) envia matrizes GPU
+#
+# 8) desenha CHIBI
+#       ↓
+#    - ativa VAO
+#    - ativa textura
+#    - glDrawArrays()
+#
+# 9) desenha GATO
+#       ↓
+#    - ativa VAO
+#    - ativa textura
+#    - glDrawArrays()
+#
+# 10) atualiza janela
+#       ↓
+#    glfw.swap_buffers()
+#
+# 11) processa eventos
+#       ↓
+#    glfw.poll_events()
+#
+#
+# ==========================================================
+# FINALIZAÇÃO
+# ==========================================================
+#
+# janela fechada:
+#       ↓
+# glfw.terminate()
+#
+# ==========================================================
