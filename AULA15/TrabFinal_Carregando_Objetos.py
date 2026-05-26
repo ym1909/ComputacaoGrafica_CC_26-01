@@ -1,5 +1,5 @@
 # ==========================================================
-# Ex7_Carregando_Objetos.py
+# TrabFinal_Carregando_Objetos.py
 # ==========================================================
 #
 # OpenGL Moderno
